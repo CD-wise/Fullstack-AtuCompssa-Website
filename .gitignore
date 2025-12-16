@@ -1,0 +1,37 @@
+# Environment variables
+.env.local
+.env*.local
+.env
+
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+*.log
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# Testing
+coverage/
+.nyc_output/
+
+# Package manager lock files (optional - keep pnpm-lock.yaml for reproducibility)
+package-lock.json
