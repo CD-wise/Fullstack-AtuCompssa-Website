@@ -40,7 +40,7 @@ export async function Footer() {
 
   return (
     <footer className="border-t bg-card py-12">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-4 sm:container sm:mx-auto">
         <div className="grid gap-8 md:grid-cols-3">
           {/* Brand */}
           <div className="flex flex-col items-center">

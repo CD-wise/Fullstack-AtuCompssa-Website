@@ -59,7 +59,7 @@ export function HeroSection() {
         ))}
       </div>
 
-      <div className="container mx-auto px-4 py-20 md:py-32">
+      <div className="w-full px-4 sm:container sm:mx-auto py-20 md:py-32">
         <div className="mx-auto max-w-3xl text-center">
           {/* Animated badge */}
           <div 

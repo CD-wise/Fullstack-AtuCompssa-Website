@@ -36,7 +36,7 @@ export function ClubsSection({ clubs }: ClubsSectionProps) {
       {/* Tech background accent */}
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="w-full px-4 sm:container sm:mx-auto relative z-10">
         <ScrollAnimator className="mx-auto max-w-2xl text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-3">
             <Zap className="h-5 w-5 text-accent" />

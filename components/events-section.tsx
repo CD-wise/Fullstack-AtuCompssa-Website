@@ -39,7 +39,7 @@ export function EventsSection({ events }: EventsSectionProps) {
       {/* Tech background accent */}
       <div className="absolute top-1/2 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="w-full px-4 sm:container sm:mx-auto relative z-10">
         <ScrollAnimator className="mx-auto max-w-2xl text-center mb-12">
           <Badge variant="outline" className="mb-4 px-4 py-1">
             Stay Updated

@@ -23,7 +23,7 @@ export function CTASection() {
       <div className="absolute bottom-10 right-10 w-32 h-32 rounded-full bg-white/10 blur-3xl animate-float-particle" style={{ animationDelay: "1s" }} />
       <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full bg-accent/20 blur-xl animate-float-particle" style={{ animationDelay: "2s" }} />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="w-full px-4 sm:container sm:mx-auto relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <ScrollAnimator className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6 hover:bg-white/30 transition-all duration-300">
             <Code2 className="h-4 w-4 text-white animate-bounce" />
