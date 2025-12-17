@@ -34,7 +34,7 @@ export function HeadMessageSection({ imageUrl, name, title, message }: HeadMessa
                 <div className="flex flex-col">
                   {/* Label on top of image */}
                   <div className="px-6 pt-6 pb-2">
-                    <p className="text-white font-extrabold text-lg sm:text-xl font-serif tracking-wider drop-shadow-lg">{label}</p>
+                    <p className="text-slate-900 dark:text-white font-extrabold text-lg sm:text-xl font-serif tracking-wider drop-shadow-lg">{label}</p>
                   </div>
                   
                   {/* Image */}
@@ -56,8 +56,8 @@ export function HeadMessageSection({ imageUrl, name, title, message }: HeadMessa
                 <div className="p-6 sm:p-8 flex flex-col justify-center">
                   {/* Header */}
                   <div className="mb-6">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-1 text-white">{name}</h3>
-                    <p className="text-white/80 font-semibold text-sm sm:text-base">{title}</p>
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-1 text-slate-900 dark:text-white">{name}</h3>
+                    <p className="text-slate-700 dark:text-white/80 font-semibold text-sm sm:text-base">{title}</p>
                   </div>
 
                   {/* Divider */}

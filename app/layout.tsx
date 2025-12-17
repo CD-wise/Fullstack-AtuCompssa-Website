@@ -15,20 +15,7 @@ export const metadata: Metadata = {
     "Official portal of the Compssa Department - Registration, Events, Staff Directory, and Announcements",
   generator: "v0.app",
   icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
+    icon: "/addresslogo.png",
     apple: "/apple-icon.png",
   },
 }
@@ -55,6 +42,8 @@ export default function RootLayout({
             `,
           }}
         />
+        <link rel="icon" href="/addresslogo.png" />
+        <link rel="shortcut icon" href="/addresslogo.png" />
       </head>
       <body className={`font-sans antialiased`}>
         <TopTabs />
