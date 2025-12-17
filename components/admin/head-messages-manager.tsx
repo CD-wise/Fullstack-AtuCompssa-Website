@@ -258,7 +258,7 @@ export function HeadMessagesManager({ initialMessages }: HeadMessagesManagerProp
               Add Head Message
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="max-w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingMessage ? "Edit Head Message" : "Add New Head Message"}</DialogTitle>
               <DialogDescription>

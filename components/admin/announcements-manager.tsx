@@ -259,7 +259,7 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
               Add Announcement
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="max-w-[95vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingAnnouncement ? "Edit Announcement" : "Add New Announcement"}</DialogTitle>
               <DialogDescription>

@@ -106,7 +106,7 @@ export function ClubsManager({ initialClubs }: ClubsManagerProps) {
               Add Club
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="max-w-[95vw] sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Club" : "Add New Club"}</DialogTitle>
               <DialogDescription>{editing ? "Update the club details" : "Provide details for the new club"}</DialogDescription>

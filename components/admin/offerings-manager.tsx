@@ -143,7 +143,7 @@ export function OfferingsManager({ initialOfferings }: OfferingsManagerProps) {
               Add Offering
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="max-w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingOffering ? "Edit Offering" : "Add New Offering"}</DialogTitle>
               <DialogDescription>

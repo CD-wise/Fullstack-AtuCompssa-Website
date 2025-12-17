@@ -201,7 +201,7 @@ export function GalleryManager({ initialImages }: GalleryManagerProps) {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-md max-h-[85vh] overflow-auto">
+        <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingImage ? "Edit Gallery Image" : "Add Gallery Image"}

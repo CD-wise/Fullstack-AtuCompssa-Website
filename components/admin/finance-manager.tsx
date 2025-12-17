@@ -298,7 +298,7 @@ export function FinanceManager({ initialStudents, initialTransactions, adminId, 
                     Add Transaction
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="max-w-[95vw] sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Add Transaction</DialogTitle>
                     <DialogDescription>Record a new income or expense transaction</DialogDescription>
