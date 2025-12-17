@@ -39,7 +39,7 @@ export async function Footer() {
   ]
 
   return (
-    <footer className="border-t bg-card py-12">
+    <footer className="border-t bg-slate-900 dark:bg-slate-950 py-12">
       <div className="w-full px-4 sm:container sm:mx-auto">
         <div className="grid gap-8 md:grid-cols-3">
           {/* Brand */}
@@ -49,11 +49,11 @@ export async function Footer() {
                 <Logo size={96} className="w-12 sm:w-24" />
               </div>
               <div className="text-center">
-                <span className="font-semibold text-lg block">Compssa Department</span>
-                <span className="text-base sm:text-lg text-muted-foreground font-semibold">Accra Technical University</span>
+                <span className="font-semibold text-lg block text-white">Compssa Department</span>
+                <span className="text-base sm:text-lg text-gray-300 font-semibold">Accra Technical University</span>
               </div>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-gray-300 leading-relaxed">
               Empowering students with cutting-edge Compssa education and preparing them for successful careers
               in technology.
             </p>
@@ -68,7 +68,7 @@ export async function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className={`p-2 rounded-full transition-colors ${social.hoverColor} text-muted-foreground`}
+                    className={`p-2 rounded-full transition-colors ${social.hoverColor} text-gray-300`}
                   >
                     {social.label === "Twitter" && (
                       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -113,25 +113,25 @@ export async function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h3 className="font-semibold mb-4 text-white">Quick Links</h3>
+            <ul className="space-y-2 text-sm text-gray-300">
               <li>
-                <a href="#offerings" className="hover:text-foreground transition-colors">
+                <a href="#offerings" className="hover:text-white transition-colors">
                   Programs
                 </a>
               </li>
               <li>
-                <a href="#events" className="hover:text-foreground transition-colors">
+                <a href="#events" className="hover:text-white transition-colors">
                   Events
                 </a>
               </li>
               <li>
-                <a href="#staff" className="hover:text-foreground transition-colors">
+                <a href="#staff" className="hover:text-white transition-colors">
                   Staff Directory
                 </a>
               </li>
               <li>
-                <a href="#announcements" className="hover:text-foreground transition-colors">
+                <a href="#announcements" className="hover:text-white transition-colors">
                   Announcements
                 </a>
               </li>
@@ -140,21 +140,21 @@ export async function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold mb-4">Contact Us</h3>
-            <ul className="space-y-3 text-sm text-muted-foreground">
+            <h3 className="font-semibold mb-4 text-white">Contact Us</h3>
+            <ul className="space-y-3 text-sm text-gray-300">
               <li className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 <span>{address}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <a href={`mailto:${email}`} className="hover:text-foreground transition-colors">
+                <a href={`mailto:${email}`} className="hover:text-white transition-colors">
                   {email}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-foreground transition-colors">
+                <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-white transition-colors">
                   {phone}
                 </a>
               </li>
@@ -162,9 +162,9 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t">
-          <p className="text-center text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Compssa Department. All rights reserved.</p>
-          <p className="text-center text-xs text-muted-foreground mt-2">Designed by Bridge Intelligence</p>
+        <div className="mt-8 pt-8 border-t border-gray-700">
+          <p className="text-center text-sm text-gray-400">&copy; {new Date().getFullYear()} Compssa Department. All rights reserved.</p>
+          <p className="text-center text-xs text-gray-500 mt-2">Designed by Bridge Intelligence</p>
         </div>
       </div>
     </footer>

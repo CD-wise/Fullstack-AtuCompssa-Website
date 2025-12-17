@@ -45,6 +45,18 @@ export interface Announcement {
   id: string
   title: string
   content: string
+  image_url: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface HeadMessage {
+  id: string
+  title: string
+  name: string
+  message: string
+  image_url: string | null
   is_active: boolean
   created_at: string
   updated_at: string
@@ -98,4 +110,13 @@ export interface GalleryImage {
   display_order: number
   created_at: string
   updated_at: string
+}
+export interface ContactSubmission {
+  id: string
+  name: string
+  email: string
+  subject: string
+  message: string
+  is_read: boolean
+  created_at: string
 }

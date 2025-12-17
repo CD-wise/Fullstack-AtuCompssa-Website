@@ -22,24 +22,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, Pencil, Trash2, Bell, Image as ImageIcon, X } from "lucide-react"
-import type { Announcement } from "@/lib/types"
+import { Plus, Pencil, Trash2, Image as ImageIcon, X } from "lucide-react"
+import type { HeadMessage } from "@/lib/types"
 import Image from "next/image"
 
-interface AnnouncementsManagerProps {
-  initialAnnouncements: Announcement[]
+interface HeadMessagesManagerProps {
+  initialMessages: HeadMessage[]
 }
 
-export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsManagerProps) {
-  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements)
+export function HeadMessagesManager({ initialMessages }: HeadMessagesManagerProps) {
+  const [messages, setMessages] = useState<HeadMessage[]>(initialMessages)
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null)
+  const [editingMessage, setEditingMessage] = useState<HeadMessage | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [formData, setFormData] = useState({
     title: "",
-    content: "",
+    name: "",
+    message: "",
     is_active: true,
   })
   const router = useRouter()
@@ -47,16 +48,35 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
   const resetForm = () => {
     setFormData({
       title: "",
-      content: "",
+      name: "",
+      message: "",
       is_active: true,
     })
-    setEditingAnnouncement(null)
+    setEditingMessage(null)
     setImagePreview(null)
     setSelectedFile(null)
   }
 
-  // Resize image file to max dimensions (keeps aspect ratio, doesn't upscale)
-  const resizeImageFile = (file: File, maxWidth = 400, maxHeight = 400): Promise<File> => {
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    if (!open) resetForm()
+  }
+
+  const handleEdit = (msg: HeadMessage) => {
+    setEditingMessage(msg)
+    setFormData({
+      title: msg.title,
+      name: msg.name,
+      message: msg.message,
+      is_active: msg.is_active,
+    })
+    setImagePreview(msg.image_url)
+    setSelectedFile(null)
+    setIsOpen(true)
+  }
+
+  // Resize image file to max dimensions
+  const resizeImageFile = (file: File, maxWidth = 500, maxHeight = 500): Promise<File> => {
     return new Promise((resolve, reject) => {
       const img = document.createElement('img') as HTMLImageElement
       img.onload = () => {
@@ -90,28 +110,11 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
     })
   }
 
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open)
-    if (!open) resetForm()
-  }
-
-  const handleEdit = (announcement: Announcement) => {
-    setEditingAnnouncement(announcement)
-    setFormData({
-      title: announcement.title,
-      content: announcement.content,
-      is_active: announcement.is_active,
-    })
-    setImagePreview(announcement.image_url)
-    setSelectedFile(null)
-    setIsOpen(true)
-  }
-
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       try {
-        const resized = await resizeImageFile(file, 400, 400)
+        const resized = await resizeImageFile(file, 500, 500)
         setSelectedFile(resized)
         const reader = new FileReader()
         reader.onloadend = () => setImagePreview(reader.result as string)
@@ -137,22 +140,23 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
     const supabase = createClient()
 
     try {
-      let imageUrl = editingAnnouncement?.image_url || null
+      let imageUrl = editingMessage?.image_url || null
 
       // Upload image if selected
       if (selectedFile) {
+        console.log('Uploading image:', selectedFile.name)
+        // Get file extension from the file type
         const ext = selectedFile.type.split('/')[1] || 'jpg'
-        const fileName = `announcement-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${ext}`
+        const fileName = `head-message-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${ext}`
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("announcements")
           .upload(fileName, selectedFile, { upsert: false })
 
         if (uploadError) {
-          // Provide a clearer error when the storage bucket is missing
           const msg = uploadError?.message || String(uploadError)
-          if (/bucket not found/i.test(msg)) {
+          if (/bucket not found/i.test(msg) || /not found/i.test(msg)) {
             throw new Error(
-              "Storage bucket 'announcements' not found. Create a bucket named 'announcements' in your Supabase project's Storage (can be public) and retry. See https://app.supabase.com -> your project -> Storage"
+              "Storage bucket 'announcements' not found. Create a bucket named 'announcements' in your Supabase project's Storage and retry."
             )
           }
           throw uploadError
@@ -163,11 +167,14 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
           .getPublicUrl(uploadData.path)
 
         imageUrl = urlData.publicUrl
+        console.log('Image uploaded successfully, URL:', imageUrl)
+      } else {
+        console.log('No image selected, keeping existing URL:', imageUrl)
       }
 
-      if (editingAnnouncement) {
-        // Use server API to perform update (server performs DB write with service role)
-        const res = await fetch(`/api/admin/announcements/${editingAnnouncement.id}`, {
+      if (editingMessage) {
+        console.log('Sending update request with data:', { ...formData, image_url: imageUrl })
+        const res = await fetch(`/api/admin/head-messages/${editingMessage.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...formData, image_url: imageUrl }),
@@ -175,15 +182,16 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
 
         if (!res.ok) {
           const text = await res.text()
-          console.error('Update announcement failed', res.status, text)
-          throw new Error(text || "Failed to update announcement")
+          console.error('Update head message failed', res.status, text)
+          throw new Error(text || "Failed to update head message")
         }
 
         const result = await res.json()
         const updated = result.data
-        setAnnouncements(announcements.map((a) => (a.id === editingAnnouncement.id ? updated : a)))
+        setMessages(messages.map((m) => (m.id === editingMessage.id ? updated : m)))
       } else {
-        const res = await fetch(`/api/admin/announcements`, {
+        console.log('Sending create request with data:', { ...formData, image_url: imageUrl })
+        const res = await fetch(`/api/admin/head-messages`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...formData, image_url: imageUrl }),
@@ -191,44 +199,43 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
 
         if (!res.ok) {
           const text = await res.text()
-          console.error('Create announcement failed', res.status, text)
-          throw new Error(text || "Failed to create announcement")
+          console.error('Create head message failed', res.status, text)
+          throw new Error(text || "Failed to create head message")
         }
 
         const result = await res.json()
-        setAnnouncements([result.data, ...announcements])
+        setMessages([result.data, ...messages])
       }
 
       setIsOpen(false)
       resetForm()
       router.refresh()
     } catch (error) {
-      console.error("Error saving announcement:", error)
+      console.error("Error saving head message:", error)
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this announcement?")) return
+    if (!confirm("Are you sure you want to delete this head message?")) return
 
-    // Call server API to delete (server uses service role)
-    const res = await fetch(`/api/admin/announcements/${id}`, { method: 'DELETE' })
+    const res = await fetch(`/api/admin/head-messages/${id}`, { method: 'DELETE' })
     if (!res.ok) {
       const text = await res.text()
       console.error('Delete failed:', text)
       return
     }
-    setAnnouncements(announcements.filter((a) => a.id !== id))
+    setMessages(messages.filter((m) => m.id !== id))
     router.refresh()
   }
 
-  const toggleActive = async (announcement: Announcement) => {
-    const newStatus = !announcement.is_active
-    const res = await fetch(`/api/admin/announcements/${announcement.id}`, {
+  const toggleActive = async (msg: HeadMessage) => {
+    const newStatus = !msg.is_active
+    const res = await fetch(`/api/admin/head-messages/${msg.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...announcement, is_active: newStatus }),
+      body: JSON.stringify({ ...msg, is_active: newStatus }),
     })
     if (!res.ok) {
       console.error('Toggle active failed', await res.text())
@@ -236,63 +243,66 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
     }
     const result = await res.json()
     const updated = result.data
-    setAnnouncements(announcements.map((a) => (a.id === announcement.id ? updated : a)))
+    setMessages(messages.map((m) => (m.id === msg.id ? updated : m)))
     router.refresh()
-  }
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
   }
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>All Announcements ({announcements.length})</CardTitle>
+        <CardTitle>Head Messages ({messages.length})</CardTitle>
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
             <Button className="gap-2">
               <Plus className="h-4 w-4" />
-              Add Announcement
+              Add Head Message
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>{editingAnnouncement ? "Edit Announcement" : "Add New Announcement"}</DialogTitle>
+              <DialogTitle>{editingMessage ? "Edit Head Message" : "Add New Head Message"}</DialogTitle>
               <DialogDescription>
-                {editingAnnouncement
-                  ? "Update the announcement details below"
-                  : "Fill in the details for the new announcement"}
+                {editingMessage
+                  ? "Update the head message details below"
+                  : "Fill in the details for a new head message (Head of Department or Faculty Dean)"}
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit}>
-              <div className="grid gap-4 py-4">
+              <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-4">
                 <div className="grid gap-2">
                   <Label htmlFor="title">Title *</Label>
                   <Input
                     id="title"
+                    placeholder="e.g., Head of Department of Computer Science"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     required
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="content">Content *</Label>
-                  <Textarea
-                    id="content"
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    rows={4}
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    placeholder="e.g., Dr. John Smith"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
                   />
                 </div>
-                
+                <div className="grid gap-2">
+                  <Label htmlFor="message">Message *</Label>
+                  <Textarea
+                    id="message"
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    rows={5}
+                    required
+                  />
+                </div>
+
                 {/* Image Upload Section */}
                 <div className="grid gap-2">
-                  <Label>Image (Square - 400x400px recommended)</Label>
+                  <Label>Image (Square - 500x500px recommended)</Label>
                   {imagePreview ? (
                     <div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-primary">
                       <Image
@@ -336,7 +346,7 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
               </div>
               <DialogFooter>
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? "Saving..." : editingAnnouncement ? "Update" : "Create"}
+                  {isLoading ? "Saving..." : editingMessage ? "Update" : "Create"}
                 </Button>
               </DialogFooter>
             </form>
@@ -344,55 +354,58 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
         </Dialog>
       </CardHeader>
       <CardContent>
-        {announcements.length > 0 ? (
+        {messages.length > 0 ? (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Announcement</TableHead>
+                  <TableHead>Head Message</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {announcements.map((announcement) => (
-                  <TableRow key={announcement.id}>
+                {messages.map((msg) => (
+                  <TableRow key={msg.id}>
                     <TableCell>
                       <div className="flex items-start gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                          <Bell className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <div className="font-medium">{announcement.title}</div>
-                          <div className="text-sm text-muted-foreground line-clamp-2 max-w-md">
-                            {announcement.content}
+                        {msg.image_url && (
+                          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg overflow-hidden">
+                            <Image
+                              src={msg.image_url}
+                              alt={msg.name}
+                              fill
+                              className="object-cover"
+                            />
                           </div>
-                          {announcement.image_url && (
-                            <div className="text-xs text-primary mt-1">📷 Has image</div>
-                          )}
+                        )}
+                        <div>
+                          <div className="font-medium">{msg.name}</div>
+                          <div className="text-sm text-muted-foreground">{msg.title}</div>
+                          <div className="text-xs text-muted-foreground line-clamp-1 max-w-md mt-1">
+                            {msg.message}
+                          </div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={announcement.is_active ? "default" : "secondary"}
+                        variant={msg.is_active ? "default" : "secondary"}
                         className="cursor-pointer"
-                        onClick={() => toggleActive(announcement)}
+                        onClick={() => toggleActive(msg)}
                       >
-                        {announcement.is_active ? "Active" : "Inactive"}
+                        {msg.is_active ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{formatDate(announcement.created_at)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEdit(announcement)}>
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(msg)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDelete(announcement.id)}
+                          onClick={() => handleDelete(msg.id)}
                           className="text-destructive hover:text-destructive"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -406,11 +419,10 @@ export function AnnouncementsManager({ initialAnnouncements }: AnnouncementsMana
           </div>
         ) : (
           <div className="text-center py-12 text-muted-foreground">
-            No announcements yet. Click &quot;Add Announcement&quot; to create one.
+            No head messages yet. Click &quot;Add Head Message&quot; to create one.
           </div>
         )}
       </CardContent>
     </Card>
   )
 }
-

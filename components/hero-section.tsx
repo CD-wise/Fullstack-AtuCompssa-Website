@@ -82,7 +82,7 @@ export function HeroSection() {
             style={{ animationDelay: '0.1s' }}
           >
             <span className="block">Welcome to</span>
-            <span className="gradient-text">Compssa Department</span>
+            <span className="gradient-text text-5xl sm:text-6xl md:text-7xl">Computer Science Department</span>
           </h1>
 
           {/* Animated subtitle */}

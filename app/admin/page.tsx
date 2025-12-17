@@ -1,13 +1,13 @@
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar, Lightbulb, Users, Bell, UsersRound, TrendingUp, Image } from "lucide-react"
+import { Calendar, Lightbulb, Users, Bell, UsersRound, TrendingUp, Image, MessageSquare } from "lucide-react"
 import Link from "next/link"
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
 
   // Fetch counts in parallel
-  const [eventsRes, offeringsRes, staffRes, announcementsRes, studentsRes, clubsRes, galleryRes] = await Promise.all([
+  const [eventsRes, offeringsRes, staffRes, announcementsRes, studentsRes, clubsRes, galleryRes, headMessagesRes] = await Promise.all([
     supabase.from("events").select("id", { count: "exact", head: true }),
     supabase.from("department_offerings").select("id", { count: "exact", head: true }),
     supabase.from("staff").select("id", { count: "exact", head: true }),
@@ -15,6 +15,7 @@ export default async function AdminDashboard() {
     supabase.from("students").select("id", { count: "exact", head: true }),
     supabase.from("clubs").select("id", { count: "exact", head: true }),
     supabase.from("gallery_images").select("id", { count: "exact", head: true }),
+    supabase.from("head_messages").select("id", { count: "exact", head: true }),
   ])
 
   const stats = [
@@ -73,6 +74,14 @@ export default async function AdminDashboard() {
       href: "/admin/gallery",
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10",
+    },
+    {
+      label: "Head Messages",
+      value: headMessagesRes?.count || 0,
+      icon: MessageSquare,
+      href: "/admin/head-messages",
+      color: "text-indigo-500",
+      bgColor: "bg-indigo-500/10",
     },
   ]
 
