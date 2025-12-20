@@ -88,7 +88,7 @@ export function AdminSidebar({ admin }: AdminSidebarProps) {
   }, [supabase])
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r bg-card lg:flex">
+    <aside className="w-64 flex-col border-r bg-card hidden lg:flex">
       <div className="flex h-16 items-center gap-2 border-b px-6">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
           <GraduationCap className="h-5 w-5" />
